@@ -1,0 +1,124 @@
+<div id="toolbar">
+	<button onclick="addData( )" class="easyui-linkbutton" data-options="iconCls:'icon-add'">添加</button>
+</div>
+<table id="table">
+</table>
+
+
+<script>
+	var id
+
+	$(function () {
+
+		var url = location.search;
+		id = url.substr(1)
+
+	});
+
+
+	$('#table').datagrid({
+		url: 'releaseCourse/getclass?teacher_id=' + id,
+		title: "发布课程",
+		toolbar: '#toolbar',
+		singleSelect: true,
+		columns: [[
+			{ field: 'class_id', title: '课程id', width: 100, hidden: true },
+			{ field: 'class_name', title: '课程名称', width: 100, editor: 'text' },
+			{ field: 'class_address', title: '上课地点', width: 100, editor: 'text' },
+			{ field: 'class_time', title: '上课时间', width: 100, editor: 'text' },
+			{
+				field: 'option', title: '操作', width: 80, align: 'center',
+
+				formatter: function (value, row, index) {
+
+					var btn = "<a class='link-button' href='javascript:editOne(" + index + ")'>编辑 </a>";
+
+					btn += "  <a class='link-button' href='javascript:saveOne(" + index + ")'>保存 </a> ";
+
+					return btn;
+
+				}
+			}
+
+		]]
+	});
+
+
+	function addData() {
+
+		$('#table').datagrid('appendRow', {});
+		editIndex = $('#table').datagrid('getRows').length - 1;
+		$('#table').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+
+	}
+
+
+	function editOne(index) {
+		$('#table').datagrid('beginEdit', index);
+	}
+
+	function saveOne(index) {
+
+		var row = $('#table').datagrid('getSelected');
+		$('#table').datagrid('endEdit', index);
+		var data = $('#table').datagrid('getData');
+
+		if (data.rows[index].class_name != '' && data.rows[index].class_address != '' && data.rows[index].class_time != '') {
+			if (data.rows[index].class_id == null) {
+				//alert('空');
+				//新增加的
+				var json = {
+					"class_name": data.rows[index].class_name,
+					"teacher_id": id,
+					"class_address": data.rows[index].class_address,
+					"class_time": data.rows[index].class_time,
+
+				};
+				$.ajax({
+					url: 'releaseCourse/addClass',
+					type: "POST",
+					contentType: 'application/json;charset=utf-8',
+					data: JSON.stringify(json), //转JSON字符串  
+					dataType: 'json',
+					success: function (data) {
+						if (data.result) {
+							$.messager.alert('提示', '添加课程成功！');
+							$('#table').datagrid('reload');
+						}
+					}
+
+				});
+			}
+			else {
+				//alert(data.rows[index].movie_id);
+				//修改的
+				var json = {
+					"class_id": data.rows[index].class_id,
+					"class_name": data.rows[index].class_name,
+					"teacher_id": id,
+					"class_address": data.rows[index].class_address,
+					"class_time": data.rows[index].class_time,
+				};
+				$.ajax({
+					url: 'releaseCourse/updateClass',
+					type: "POST",
+					contentType: 'application/json;charset=utf-8',
+					data: JSON.stringify(json), //转JSON字符串  
+					dataType: 'json',
+					success: function (data) {
+						if (data.result) {
+							$.messager.alert('提示', '修改课程成功！');
+							$('#table').datagrid('reload');
+						}
+					}
+
+				});
+			}
+		}
+		else {
+			$.messager.alert('提示', '所有项不能为空！');
+			$('#table').datagrid('beginEdit', index);
+		}
+	}
+
+</script>

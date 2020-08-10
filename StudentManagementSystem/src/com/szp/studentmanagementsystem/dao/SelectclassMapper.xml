@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szp.studentmanagementsystem.dao.SelectclassMapper" >
+  <resultMap id="BaseResultMap" type="com.szp.studentmanagementsystem.po.Selectclass" >
+    <id column="class_id" property="class_id" jdbcType="VARCHAR" />
+    <id column="student_id" property="student_id" jdbcType="VARCHAR" />
+    <result column="class_score" property="class_score" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    class_id, student_id, class_score
+  </sql>
+  
+  
+  
+  <!-- List<StudentSelectClass> Getselectclass(String student_id); -->
+    <select id="Getselectclass" resultType="com.szp.studentmanagementsystem.jo.StudentSelectClass" parameterType="java.lang.String" >
+   select DISTINCT class.class_id  ,  class.class_name  , class.teacher_id , teacher.teacher_name  ,class.class_address , class.class_time 
+		FROM class ,teacher
+	where class_id NOt in(SELECT class_id FROM selectclass where student_id=#{student_id}) AND teacher.teacher_id=class.teacher_id;
+  </select>
+  
+  <!-- List<StudentSelectClass> Getselectclassresult(String student_id); -->
+      <select id="Getselectclassresult" resultType="com.szp.studentmanagementsystem.jo.StudentSelectClass" parameterType="java.lang.String" >
+   select  class.class_id  ,  class.class_name  , class.teacher_id , teacher.teacher_name  ,class.class_address , class.class_time 
+		FROM selectclass
+	LEFT JOIN	 class ON selectclass.class_id=class.class_id 
+	LEFT JOIN  teacher ON  teacher.teacher_id=class.teacher_id
+	where  selectclass.student_id=#{student_id}
+	;
+  </select>
+  
+  <!-- void Studentselect(Selectclass selectclass)  -->
+    <insert id="Studentselect" parameterType="com.szp.studentmanagementsystem.po.Selectclass" >
+    insert into selectclass (class_id, student_id, class_score
+      )
+    values (#{class_id}, #{student_id},null
+      )
+  </insert>
+  
+  <!-- List<StudentSelectClass> Getclassscore(String student_id) -->
+  <select id="Getclassscore" resultType="com.szp.studentmanagementsystem.jo.StudentSelectClass" parameterType="java.lang.String" >
+   select  class.class_id  ,  class.class_name  , class.teacher_id , teacher.teacher_name  ,class.class_address , class.class_time ,selectclass.class_score
+		FROM selectclass
+	LEFT JOIN	 class ON selectclass.class_id=class.class_id 
+	LEFT JOIN  teacher ON  teacher.teacher_id=class.teacher_id
+	where  selectclass.student_id=#{student_id}
+	;
+  </select>
+  
+  
+  
+  <!-- List<EnteringGrades> getEnteringGrades(String teacher_id) -->
+    <select id="getEnteringGrades" resultType="com.szp.studentmanagementsystem.jo.EnteringGrades" parameterType="java.lang.String" >
+     select  class.class_id  ,  class.class_name  , selectclass.student_id , student_name  , selectclass.class_score
+		FROM teacher
+	LEFT JOIN	 class ON teacher.teacher_id=class.teacher_id 
+	LEFT JOIN  selectclass ON  selectclass.class_id=class.class_id
+	LEFT JOIN  student ON  student.student_id=selectclass.student_id
+	where  teacher.teacher_id=#{teacher_id}
+	;
+  </select>
+  
+  <!--  void AddSelectclassscore(Selectclass selectclass) -->
+   <update id="AddSelectclassscore" parameterType="com.szp.studentmanagementsystem.po.Selectclass" >
+    update selectclass
+    set 
+      class_score = #{class_score,jdbcType=DOUBLE}
+    where class_id = #{class_id,jdbcType=VARCHAR} and
+      student_id = #{student_id,jdbcType=VARCHAR}
+  </update>
+  
+  
+  
+  
+  
+  
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.szp.studentmanagementsystem.po.SelectclassExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from selectclass
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.szp.studentmanagementsystem.po.SelectclassKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from selectclass
+    where class_id = #{class_id,jdbcType=VARCHAR}
+      and student_id = #{student_id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.szp.studentmanagementsystem.po.SelectclassKey" >
+    delete from selectclass
+    where class_id = #{class_id,jdbcType=VARCHAR}
+      and student_id = #{student_id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.szp.studentmanagementsystem.po.SelectclassExample" >
+    delete from selectclass
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.szp.studentmanagementsystem.po.Selectclass" >
+    insert into selectclass (class_id, student_id, class_score
+      )
+    values (#{class_id,jdbcType=VARCHAR}, #{student_id,jdbcType=VARCHAR}, #{class_score,jdbcType=DOUBLE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.szp.studentmanagementsystem.po.Selectclass" >
+    insert into selectclass
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="class_id != null" >
+        class_id,
+      </if>
+      <if test="student_id != null" >
+        student_id,
+      </if>
+      <if test="class_score != null" >
+        class_score,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="class_id != null" >
+        #{class_id,jdbcType=VARCHAR},
+      </if>
+      <if test="student_id != null" >
+        #{student_id,jdbcType=VARCHAR},
+      </if>
+      <if test="class_score != null" >
+        #{class_score,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.szp.studentmanagementsystem.po.SelectclassExample" resultType="java.lang.Integer" >
+    select count(*) from selectclass
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update selectclass
+    <set >
+      <if test="record.class_id != null" >
+        class_id = #{record.class_id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.student_id != null" >
+        student_id = #{record.student_id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.class_score != null" >
+        class_score = #{record.class_score,jdbcType=DOUBLE},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update selectclass
+    set class_id = #{record.class_id,jdbcType=VARCHAR},
+      student_id = #{record.student_id,jdbcType=VARCHAR},
+      class_score = #{record.class_score,jdbcType=DOUBLE}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.szp.studentmanagementsystem.po.Selectclass" >
+    update selectclass
+    <set >
+      <if test="class_score != null" >
+        class_score = #{class_score,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where class_id = #{class_id,jdbcType=VARCHAR}
+      and student_id = #{student_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.szp.studentmanagementsystem.po.Selectclass" >
+    update selectclass
+    set class_score = #{class_score,jdbcType=DOUBLE}
+    where class_id = #{class_id,jdbcType=VARCHAR}
+      and student_id = #{student_id,jdbcType=VARCHAR}
+  </update>
+</mapper>

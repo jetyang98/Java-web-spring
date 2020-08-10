@@ -1,0 +1,87 @@
+<%@ page language="java" contentType="text/html; charset=UTF8"
+    pageEncoding="UTF8"%>
+
+
+<table id="table">
+</table>
+
+
+<script>
+	var id
+
+	$(function () {
+
+		var url = location.search;
+		id = url.substr(1)
+
+	});
+
+
+	$('#table').datagrid({
+		url: 'enteringGrades/getSelectclass?teacher_id=' + id,
+		title: "录入成绩",
+		singleSelect: true,
+		columns: [[
+			{ field: 'class_id', title: '课程id', width: 100, hidden: true },
+			{ field: 'class_name', title: '课程名称', width: 100 },
+			{ field: 'student_id', title: '学生学号', width: 100 },
+			{ field: 'student_name', title: '学生姓名', width: 100 },
+			{ field: 'class_score', title: '学生成绩', width: 100, editor: 'numberbox' },
+			{
+				field: 'option', title: '操作', width: 80, align: 'center',
+
+				formatter: function (value, row, index) {
+
+					var btn = "<a class='link-button' href='javascript:editOne(" + index + ")'>编辑 </a>";
+
+					btn += "  <a class='link-button' href='javascript:saveOne(" + index + ")'>保存 </a> ";
+
+					return btn;
+
+				}
+			}
+
+		]]
+	});
+
+	function editOne(index) {
+		$('#table').datagrid('beginEdit', index);
+	}
+
+	function saveOne(index) {
+
+		var row = $('#table').datagrid('getSelected');
+		$('#table').datagrid('endEdit', index);
+		var data = $('#table').datagrid('getData');
+
+		if (data.rows[index].class_score != '') {
+
+			var json = {
+				"class_id": data.rows[index].class_id,
+				"student_id": data.rows[index].student_id,
+				"class_score": data.rows[index].class_score,
+
+			};
+			$.ajax({
+				url: 'enteringGrades/AddSelectclassscore',
+				type: "POST",
+				contentType: 'application/json;charset=utf-8',
+				data: JSON.stringify(json), //转JSON字符串  
+				dataType: 'json',
+				success: function (data) {
+					if (data.result) {
+						$.messager.alert('提示', '成功！');
+						$('#table').datagrid('reload');
+					}
+				}
+
+			});
+
+
+		}
+		else {
+			$.messager.alert('提示', '所有项不能为空！');
+			$('#table').datagrid('beginEdit', index);
+		}
+	}
+</script>

@@ -1,0 +1,35 @@
+@CHARSET "UTF-8";
+body{
+	margin: 0;
+	font-family: -apple-system, SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
+}
+
+
+.form-table {
+	border-collapse:collapse;
+	width:100%;
+}
+.form-table td.field {
+	width: 120px; 
+	text-align:right;
+	padding:5px;
+	color:#4C3000;
+	background-color: #eeeeee;
+	border: 1px solid #dddddd;
+}
+.form-table td.value {
+	padding:5px;
+	background-color: white;
+	color:#383838;
+	border: 1px dotted #D9E8F5;
+}
+
+.form-table td.title{
+	font-size:14px; 
+	font-weight: bold; 
+	background-color: #EFFDCD;
+    border: 1px solid #DDDDDD;
+    color: #4C3000;
+	text-align: center;
+	padding: 10px;
+}

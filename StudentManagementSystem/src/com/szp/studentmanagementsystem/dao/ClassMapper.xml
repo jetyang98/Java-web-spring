@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szp.studentmanagementsystem.dao.ClassMapper" >
+  <resultMap id="BaseResultMap" type="com.szp.studentmanagementsystem.po.Class" >
+    <id column="class_id" property="class_id" jdbcType="VARCHAR" />
+    <result column="class_name" property="class_name" jdbcType="VARCHAR" />
+    <result column="teacher_id" property="teacher_id" jdbcType="VARCHAR" />
+    <result column="class_address" property="class_address" jdbcType="VARCHAR" />
+    <result column="class_time" property="class_time" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    class_id, class_name, teacher_id, class_address, class_time
+  </sql>
+  
+  
+    <!-- List<Class> Getclass(String teacher_id); -->
+  <select id="Getclass" resultType="com.szp.studentmanagementsystem.po.Class" parameterType="java.lang.String" >
+    select 
+    *
+    from class
+    where teacher_id = #{teacher_id } 
+  </select>
+  
+  
+  <!--  int getClassNumber() ; -->
+   <select id="getClassNumber" resultType="_int"  >
+    select 
+    count(1)
+    from class  
+  </select>
+	
+	 
+  <!--  void AddClass(Class addclass); -->
+    <insert id="AddClass" parameterType="com.szp.studentmanagementsystem.po.Class" >
+    insert into class (class_id, class_name, teacher_id, 
+      class_address, class_time)
+    values (#{class_id,jdbcType=VARCHAR}, #{class_name,jdbcType=VARCHAR}, #{teacher_id,jdbcType=VARCHAR}, 
+      #{class_address,jdbcType=VARCHAR}, #{class_time,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- void UpdateClass(Class addclass)  -->
+   <update id="UpdateClass" parameterType="com.szp.studentmanagementsystem.po.Class" >
+    update class
+    set
+      class_name = #{class_name},
+      teacher_id = #{teacher_id},
+      class_address = #{class_address},
+      class_time = #{class_time}
+      where  class_id = #{class_id}
+    
+  </update>
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.szp.studentmanagementsystem.po.ClassExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from class
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from class
+    where class_id = #{class_id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from class
+    where class_id = #{class_id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.szp.studentmanagementsystem.po.ClassExample" >
+    delete from class
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.szp.studentmanagementsystem.po.Class" >
+    insert into class (class_id, class_name, teacher_id, 
+      class_address, class_time)
+    values (#{class_id,jdbcType=VARCHAR}, #{class_name,jdbcType=VARCHAR}, #{teacher_id,jdbcType=VARCHAR}, 
+      #{class_address,jdbcType=VARCHAR}, #{class_time,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.szp.studentmanagementsystem.po.Class" >
+    insert into class
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="class_id != null" >
+        class_id,
+      </if>
+      <if test="class_name != null" >
+        class_name,
+      </if>
+      <if test="teacher_id != null" >
+        teacher_id,
+      </if>
+      <if test="class_address != null" >
+        class_address,
+      </if>
+      <if test="class_time != null" >
+        class_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="class_id != null" >
+        #{class_id,jdbcType=VARCHAR},
+      </if>
+      <if test="class_name != null" >
+        #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_id != null" >
+        #{teacher_id,jdbcType=VARCHAR},
+      </if>
+      <if test="class_address != null" >
+        #{class_address,jdbcType=VARCHAR},
+      </if>
+      <if test="class_time != null" >
+        #{class_time,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.szp.studentmanagementsystem.po.ClassExample" resultType="java.lang.Integer" >
+    select count(*) from class
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update class
+    <set >
+      <if test="record.class_id != null" >
+        class_id = #{record.class_id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.class_name != null" >
+        class_name = #{record.class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teacher_id != null" >
+        teacher_id = #{record.teacher_id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.class_address != null" >
+        class_address = #{record.class_address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.class_time != null" >
+        class_time = #{record.class_time,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update class
+    set class_id = #{record.class_id,jdbcType=VARCHAR},
+      class_name = #{record.class_name,jdbcType=VARCHAR},
+      teacher_id = #{record.teacher_id,jdbcType=VARCHAR},
+      class_address = #{record.class_address,jdbcType=VARCHAR},
+      class_time = #{record.class_time,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.szp.studentmanagementsystem.po.Class" >
+    update class
+    <set >
+      <if test="class_name != null" >
+        class_name = #{class_name,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_id != null" >
+        teacher_id = #{teacher_id,jdbcType=VARCHAR},
+      </if>
+      <if test="class_address != null" >
+        class_address = #{class_address,jdbcType=VARCHAR},
+      </if>
+      <if test="class_time != null" >
+        class_time = #{class_time,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where class_id = #{class_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.szp.studentmanagementsystem.po.Class" >
+    update class
+    set class_name = #{class_name,jdbcType=VARCHAR},
+      teacher_id = #{teacher_id,jdbcType=VARCHAR},
+      class_address = #{class_address,jdbcType=VARCHAR},
+      class_time = #{class_time,jdbcType=VARCHAR}
+    where class_id = #{class_id,jdbcType=VARCHAR}
+  </update>
+</mapper>
